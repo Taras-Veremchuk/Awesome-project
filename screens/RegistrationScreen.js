@@ -1,77 +1,125 @@
 import {
-	KeyboardAvoidingView,
 	ImageBackground,
-	StyleSheet,
+	KeyboardAvoidingView,
 	Text,
 	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React, { useState } from "react";
+// import { Stack, IconButton } from "@react-native-material/core";
+import React, { useEffect, useState } from "react";
+import { auth } from "../firebase";
 import { useNavigation } from "@react-navigation/native";
-import BackgroundImage from "../assets/Background.png";
-// import { auth } from "../firebase";
+import {
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	onAuthStateChanged,
+	updateProfile,
+} from "firebase/auth";
+import {
+	image,
+	wrapper,
+	title,
+	inputContainer,
+	input,
+	buttonText,
+	buttonContainer,
+	button,
+	box,
+	registerText,
+	keyboardView,
+} from "./ScreenStyles";
 
 const RegistrationScreen = () => {
-	const [name, setName] = useState("");
+	const [login, setLogin] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
 	const navigation = useNavigation();
-	// if (!name || !email || !password) {
-	// 	alert("Please fill all the fields");
-	// 	return;
-	// }
-	const handleSignUp = () => {
-		// auth
-		// 	.createUserWithEmailAndPassword(email, password)
-		// 	.then((userCredentials) => {
-		// 		const user = userCredentials.user;
-		// 		console.log(user.email);
-		// 	})
-		// 	.catch((error) => alert(error.message));
 
-		// TODO: Sign up
-		navigation.navigate("Login");
+	// useEffect(() => {
+	// 	const unsubscribe = auth.onAuthStateChanged((user) => {
+	// 		if (user) {
+	// 			navigation.navigate("Login");
+	// 		}
+	// 	});
+	// 	return unsubscribe;
+	// }, []);
+
+	const handleRegister = () => {
+		auth
+			.createUserWithEmailAndPassword(email, password)
+			.then((userCredentials) => {
+				const user = userCredentials.user;
+				console.log("Registered in with:", user.email);
+			})
+			.catch((error) => alert(error.message));
+	};
+
+	const handleLogin = () => {
+		auth
+			.signInWithEmailAndPassword(email, password)
+			.then((userCredentials) => {
+				const user = userCredentials.user;
+				console.log("Logged in with:", user.email);
+			})
+			.catch((error) => alert(error.message));
+	};
+
+	const LoginScreen = () => {
+		const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+		const handleFocus = () => {
+			setIsShowKeyboard(true);
+		};
+		const handleKeyboardHide = () => {
+			setIsShowKeyboard(false);
+			Keyboard.dismiss();
+		};
 	};
 
 	return (
-		<KeyboardAvoidingView style={styles.container} bahavior="padding">
-			<ImageBackground
-				source={BackgroundImage}
-				resizeMode="cover"
-				style={styles.image}
-			>
-				<View style={styles.formContainer}>
-					<Text style={styles.titleText}>Registration</Text>
-					<View style={styles.inputContainer}>
+		<KeyboardAvoidingView
+			style={keyboardView}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+		>
+			<ImageBackground style={image} source={require("../assets/night-2.png")}>
+				<View style={wrapper}>
+					<Text style={title}>Register</Text>
+					<View style={inputContainer}>
 						<TextInput
-							placeholder="Name"
-							value={name}
-							onChangeText={(text) => setName(text)}
-							style={styles.input}
+							placeholder="Login"
+							value={login}
+							onChangeText={(text) => setLogin(text)}
+							style={input}
 						/>
 						<TextInput
 							placeholder="Email"
 							value={email}
 							onChangeText={(text) => setEmail(text)}
-							style={styles.input}
+							style={input}
 						/>
 						<TextInput
 							placeholder="Password"
 							value={password}
 							onChangeText={(text) => setPassword(text)}
-							style={styles.input}
+							style={input}
 							secureTextEntry
 						/>
 					</View>
-					<View style={styles.buttonContainer}>
-						<TouchableOpacity
-							onPress={handleSignUp}
-							style={[styles.button, styles.buttonOutline]}
-						>
-							<Text style={styles.buttonText}>Register</Text>
+					<View style={buttonContainer}>
+						<TouchableOpacity onPress={handleRegister} style={button}>
+							<Text style={buttonText}>Register</Text>
 						</TouchableOpacity>
+						<Text style={box}>
+							Already have an account?
+							<Text
+								style={registerText}
+								onPress={() => navigation.navigate("Login")}
+							>
+								{""} Sign in
+							</Text>
+						</Text>
 					</View>
 				</View>
 			</ImageBackground>
@@ -80,58 +128,3 @@ const RegistrationScreen = () => {
 };
 
 export default RegistrationScreen;
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		// justifyContent: "center",
-		// alignItems: "center",
-	},
-	formContainer: {
-		backgroundColor: "white",
-		display: "flex",
-		alignItems: "center",
-		height: "68%",
-		marginTop: "auto",
-		borderRadius: "25px",
-	},
-	inputContainer: {
-		width: "95%",
-	},
-	input: {
-		backgroundColor: "gray",
-		paddingHorizontal: 15,
-		paddingVertical: 10,
-		borderRadius: 10,
-		marginTop: 5,
-	},
-	buttonContainer: {
-		width: "90%",
-		alignItems: "center",
-		justifyContent: "center",
-		marginTop: 40,
-	},
-	button: {
-		backgroundColor: "#3b76e2",
-		width: "100%",
-		padding: 15,
-		borderRadius: "50%",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	buttonText: {
-		color: "#ffffff",
-		fontSize: 18,
-		fontWeight: "700",
-	},
-	image: {
-		flex: 1,
-		justifyContent: "center",
-	},
-	titleText: {
-		fontSize: 25,
-		fontWeight: "bold",
-		color: "black",
-	},
-});

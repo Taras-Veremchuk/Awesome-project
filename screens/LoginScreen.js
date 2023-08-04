@@ -1,5 +1,7 @@
 import {
+	ImageBackground,
 	KeyboardAvoidingView,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -8,6 +10,21 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import {
+	login,
+	image,
+	wrapper,
+	title,
+	inputContainer,
+	input,
+	buttonText,
+	buttonContainer,
+	button,
+	box,
+	registerText,
+	keyboardView,
+} from "./ScreenStyles";
+import { KeyboardAwareScrollView } from "@pietile-native-kit/keyboard-aware-scrollview";
 
 const LoginScreen = () => {
 	const [email, setEmail] = useState("");
@@ -20,70 +37,56 @@ const LoginScreen = () => {
 	};
 
 	return (
-		<KeyboardAvoidingView style={styles.container} bahavior="padding">
-			<View style={styles.inputContainer}>
-				<TextInput
-					placeholder="Email"
-					value={email}
-					onChangeText={(text) => setEmail(text)}
-					style={styles.input}
-				/>
-				<TextInput
-					placeholder="Password"
-					value={password}
-					onChangeText={(text) => setPassword(text)}
-					style={styles.input}
-					secureTextEntry
-				/>
-			</View>
-			<View style={styles.buttonContainer}>
-				<TouchableOpacity
-					onPress={handleSignIn}
-					style={[styles.button, styles.buttonOutline]}
-				>
-					<Text style={styles.buttonText}>Login</Text>
-				</TouchableOpacity>
-			</View>
-		</KeyboardAvoidingView>
+		// <KeyboardAvoidingView
+		// 	style={keyboardView}
+		// 	enabled
+		// 	behavior={Platform.OS === "ios" ? "padding" : "height"}
+		// >
+		<View style={keyboardView}>
+			<ImageBackground style={image} source={require("../assets/night-2.png")}>
+				<View style={[wrapper, login]}>
+					<Text style={title}>Login</Text>
+					{/* <View style={inputContainer}> */}
+					{/* <ScrollView> */}
+
+					<KeyboardAvoidingView
+						style={inputContainer}
+						behavior={Platform.OS === "ios" ? "padding" : "height"}
+					>
+						<TextInput
+							placeholder="Email"
+							value={email}
+							onChangeText={(text) => setEmail(text)}
+							style={input}
+						/>
+						<TextInput
+							placeholder="Password"
+							value={password}
+							onChangeText={(text) => setPassword(text)}
+							style={input}
+							secureTextEntry
+						/>
+					</KeyboardAvoidingView>
+					{/* </ScrollView> */}
+					{/* </View> */}
+					<View style={buttonContainer}>
+						<TouchableOpacity onPress={handleSignIn} style={button}>
+							<Text style={buttonText}>Login</Text>
+						</TouchableOpacity>
+						<Text style={box}>
+							Don't have an account?
+							<Text
+								style={registerText}
+								onPress={() => navigation.navigate("Registration")}
+							>
+								{""} Register now
+							</Text>
+						</Text>
+					</View>
+				</View>
+			</ImageBackground>
+		</View>
 	);
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	inputContainer: {
-		width: "100%",
-	},
-	input: {
-		backgroundColor: "white",
-		paddingHorizontal: 15,
-		paddingVertical: 10,
-		borderRadius: 10,
-		marginTop: 5,
-	},
-	buttonContainer: {
-		width: "90%",
-		alignItems: "center",
-		justifyContent: "center",
-		marginTop: 40,
-	},
-	button: {
-		backgroundColor: "#3b76e2",
-		width: "100%",
-		padding: 15,
-		borderRadius: "50%",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	buttonText: {
-		color: "#ffffff",
-		fontSize: 18,
-		fontWeight: "700",
-	},
-});
